@@ -1,12 +1,11 @@
-# Securely calculating the average sales in multiple regions based on individual sales figures.
-# This is useful for companies to determine regional and overall sales performance while keeping individual sales data confidential.
+#Securely calculating the top-performing salesperson in multiple regions based on their sales figures. This is useful for companies to determine the best salespeople while keeping individual sales data confidential.
 
 """
-Secure Average Sales Calculation
+Secure Top-Performing Salesperson Calculation
 nr of regions: r = 3
 nr of salespersons per region: s = 2
-"""
 
+"""
 from nada_dsl import *
 
 def nada_main():
@@ -31,34 +30,20 @@ def nada_main():
     r2_s1_sales = SecretUnsignedInteger(Input(name="r2_s1_sales", party=region2))
 
     # 3. Computation
-    ## Calculate total sales for each region
-    total_sales_r0 = r0_s0_sales + r0_s1_sales
-    total_sales_r1 = r1_s0_sales + r1_s1_sales
-    total_sales_r2 = r2_s0_sales + r2_s1_sales
-
-    ## Calculate the number of salespersons in each region
-    num_salespersons_per_region = Integer(2)  # Since each region has 2 salespersons
-
-    ## Calculate average sales for each region
-    avg_sales_r0 = total_sales_r0 / num_salespersons_per_region
-    avg_sales_r1 = total_sales_r1 / num_salespersons_per_region
-    avg_sales_r2 = total_sales_r2 / num_salespersons_per_region
-
-    ## Calculate the overall total sales
-    overall_total_sales = total_sales_r0 + total_sales_r1 + total_sales_r2
-
-    ## Calculate the overall number of salespersons
-    overall_num_salespersons = Integer(3) * num_salespersons_per_region  # 3 regions, each with 2 salespersons
-
-    ## Calculate the overall average sales
-    overall_avg_sales = overall_total_sales / overall_num_salespersons
+    ## Find top salesperson in each region
+    top_sales_r0 = max(r0_s0_sales, r0_s1_sales)
+    top_sales_r1 = max(r1_s0_sales, r1_s1_sales)
+    top_sales_r2 = max(r2_s0_sales, r2_s1_sales)
+    
+    ## Find the overall top salesperson
+    top_sales_overall = max(top_sales_r0, top_sales_r1, top_sales_r2)
 
     # 4. Output
-    avg_sales_r0_output = Output(value=avg_sales_r0, name="avg_sales_region0", party=outparty)
-    avg_sales_r1_output = Output(value=avg_sales_r1, name="avg_sales_region1", party=outparty)
-    avg_sales_r2_output = Output(value=avg_sales_r2, name="avg_sales_region2", party=outparty)
-    overall_avg_sales_output = Output(value=overall_avg_sales, name="overall_avg_sales", party=outparty)
+    top_sales_r0_output = Output(top_sales_r0, "top_sales_region0", outparty)
+    top_sales_r1_output = Output(top_sales_r1, "top_sales_region1", outparty)
+    top_sales_r2_output = Output(top_sales_r2, "top_sales_region2", outparty)
+    top_sales_overall_output = Output(top_sales_overall, "top_sales_overall", outparty)
 
-    return [avg_sales_r0_output, avg_sales_r1_output, avg_sales_r2_output, overall_avg_sales_output]
+    return [top_sales_r0_output, top_sales_r1_output, top_sales_r2_output, top_sales_overall_output]
 
 # Hence the program ensures the security of the confidential data. Security is not a product, but a process and here it is achieved through secret data type.
